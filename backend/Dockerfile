@@ -49,6 +49,14 @@ WORKDIR /app
 # can do to the host or container filesystem.
 RUN addgroup --system app && adduser --system --ingroup app app
 
+# Explicitly set HOME for the app user. Without this, Python's user-site
+# package resolution (which is what makes packages installed via
+# `pip install --user` in the builder stage findable) can fail to locate
+# /home/app/.local, even though the PATH env var below still finds the
+# executable scripts — resulting in a "No module named X" error at
+# runtime despite the package clearly being present on disk.
+ENV HOME=/home/app
+
 # Copies the installed packages from the builder stage, owned by the
 # new non-root user so it can actually read/execute them.
 COPY --from=builder --chown=app:app /root/.local /home/app/.local
