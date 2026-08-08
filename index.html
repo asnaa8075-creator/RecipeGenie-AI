@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RecipeGenie AI — Turn what you have into what to cook</title>
+  <meta name="description" content="Enter the ingredients you have on hand and RecipeGenie AI generates a recipe for you instantly.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header>
+    <nav aria-label="Primary">
+      <a href="index.html" class="logo">
+        <span class="logo-mark" aria-hidden="true"></span>
+        RecipeGenie AI
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#generate">Generate a recipe</a></li>
+          <li><a href="history.html">History</a></li>
+        </ul>
+        <button type="button" class="theme-toggle" aria-label="Toggle dark or light theme" aria-pressed="false">
+          <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+        </button>
+        <button type="button" class="nav-toggle-button" aria-label="Toggle navigation menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content">
+
+    <!-- Hero -->
+    <section aria-labelledby="hero-heading" class="hero">
+      <h1 id="hero-heading">Tell us what's in your kitchen. We'll tell you what to cook.</h1>
+      <p class="hero-subtitle">
+        No more staring into the fridge. List your ingredients and get a real recipe in seconds.
+      </p>
+      <a href="#generate" class="cta-button">Generate a recipe</a>
+    </section>
+
+    <!-- How it works -->
+    <section id="how-it-works" aria-labelledby="how-it-works-heading">
+      <h2 id="how-it-works-heading">How it works</h2>
+      <ol class="steps-list">
+        <li>
+          <h3>Add your ingredients</h3>
+          <p>Type or tag whatever you have on hand — leftovers, staples, whatever's in the fridge.</p>
+        </li>
+        <li>
+          <h3>Set your preferences</h3>
+          <p>Optionally filter by diet, cuisine, or how much time you have.</p>
+        </li>
+        <li>
+          <h3>Get your recipe</h3>
+          <p>Receive a complete recipe with ingredients, steps, and timing.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Recipe generation form -->
+    <section id="generate" aria-labelledby="generate-heading">
+      <h2 id="generate-heading">Generate a recipe</h2>
+
+      <form id="recipe-form" aria-describedby="generate-heading">
+
+        <fieldset>
+          <legend>Ingredients</legend>
+          <label for="ingredients-input">What ingredients do you have?</label>
+          <input
+            type="text"
+            id="ingredients-input"
+            name="ingredients"
+            placeholder="e.g. chicken, spinach, garlic, rice"
+            autocomplete="off"
+            required
+          >
+          <p id="ingredients-hint" class="input-hint">Separate ingredients with commas.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Preferences (optional)</legend>
+
+          <div class="form-field">
+            <label for="dietary-filter">Dietary preference</label>
+            <select id="dietary-filter" name="dietaryFilter">
+              <option value="">No preference</option>
+              <option value="vegetarian">Vegetarian</option>
+              <option value="vegan">Vegan</option>
+              <option value="gluten-free">Gluten-free</option>
+              <option value="keto">Keto</option>
+              <option value="dairy-free">Dairy-free</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="cuisine-select">Cuisine style</label>
+            <select id="cuisine-select" name="cuisine">
+              <option value="">Surprise me</option>
+              <option value="italian">Italian</option>
+              <option value="indian">Indian</option>
+              <option value="thai">Thai</option>
+              <option value="mexican">Mexican</option>
+              <option value="mediterranean">Mediterranean</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="time-available">Time available</label>
+            <select id="time-available" name="timeAvailable">
+              <option value="">No limit</option>
+              <option value="15">15 minutes or less</option>
+              <option value="30">30 minutes or less</option>
+              <option value="60">1 hour or less</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <button type="submit" id="generate-button">Generate recipe</button>
+      </form>
+
+      <!-- Validation-only feedback: shown if the form is submitted with
+           invalid input, before the user ever navigates to recipe.html.
+           Generation loading/error/success states live on recipe.html,
+           since that's where generation now happens. -->
+      <div id="form-error" role="alert" hidden>
+        <p id="form-error-text"></p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 RecipeGenie AI. All rights reserved.</p>
+    <nav aria-label="Footer">
+      <ul>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </footer>
+
+  <script src="app-shared.js"></script>
+  <script src="script.js" defer></script>
+</body>
+</html>

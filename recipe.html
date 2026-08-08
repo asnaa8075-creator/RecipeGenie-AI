@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Recipe — RecipeGenie AI</title>
+  <meta name="description" content="Your AI-generated recipe from RecipeGenie AI.">
+  <!-- style.css: shared design system (tokens, header/nav/footer, glass
+       surfaces, loading/error/toast styling, animations, responsiveness).
+       recipe.css: page-specific layout for this page only. -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="recipe.css">
+  <!-- jsPDF: client-side PDF generation for the "Download PDF" action.
+       No backend involvement — the PDF is built entirely in the browser. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- Success toast: shown briefly once a recipe finishes generating -->
+  <div id="success-toast" class="toast" role="status" aria-live="polite" hidden>
+    <span class="toast-icon" aria-hidden="true">✓</span>
+    <span id="success-message-text">Recipe generated successfully!</span>
+  </div>
+
+  <header>
+    <nav aria-label="Primary">
+      <a href="index.html" class="logo">
+        <span class="logo-mark" aria-hidden="true"></span>
+        RecipeGenie AI
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#generate">New recipe</a></li>
+          <li><a href="history.html">History</a></li>
+        </ul>
+        <button type="button" class="theme-toggle" aria-label="Toggle dark or light theme" aria-pressed="false">
+          <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+        </button>
+        <button type="button" class="nav-toggle-button" aria-label="Toggle navigation menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content" class="recipe-page-main">
+
+    <a href="index.html#generate" class="back-link">&larr; Back to ingredients</a>
+
+    <h1 class="recipe-page-heading">Your recipe</h1>
+
+    <!-- Empty state: shown only if this page is opened directly, with no
+         pending request handed off from index.html -->
+    <div id="empty-state" class="empty-state">
+      <p class="empty-state-icon" aria-hidden="true">🍽️</p>
+      <p class="empty-state-text">
+        No recipe request found. Head back and enter your ingredients to
+        get started.
+      </p>
+      <a href="index.html#generate" class="btn-glass-outline">Enter ingredients</a>
+    </div>
+
+    <!-- Loading state: spinner + live typing preview of the streamed text -->
+    <div id="loading-state" role="status" aria-live="polite" hidden>
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <p class="loading-label">Generating your recipe…</p>
+      <p class="typing-preview">
+        <span id="typing-text"></span><span class="typing-cursor" aria-hidden="true"></span>
+      </p>
+    </div>
+
+    <!-- Error state: categorized message with a retry action -->
+    <div id="error-state" role="alert" hidden>
+      <span class="error-icon" aria-hidden="true">⚠️</span>
+      <p id="error-message-text">Something went wrong generating your recipe. Please try again.</p>
+      <div class="error-actions">
+        <button type="button" id="retry-button">Try again</button>
+        <a href="index.html#generate" class="btn-glass-outline">Change ingredients</a>
+      </div>
+    </div>
+
+    <!-- Result: populated dynamically by recipe.js -->
+    <section id="recipe-result" aria-labelledby="recipe-result-heading" hidden>
+      <h2 id="recipe-result-heading" class="visually-hidden">Your recipe</h2>
+
+      <article class="recipe-card">
+        <header class="recipe-card-header">
+          <h3 class="recipe-title"></h3>
+          <p class="recipe-description"></p>
+          <dl class="recipe-meta">
+            <div>
+              <dt>Servings</dt>
+              <dd class="recipe-servings"></dd>
+            </div>
+            <div>
+              <dt>Prep time</dt>
+              <dd class="recipe-prep-time"></dd>
+            </div>
+            <div>
+              <dt>Cook time</dt>
+              <dd class="recipe-cook-time"></dd>
+            </div>
+          </dl>
+
+          <div class="recipe-utility-actions" aria-label="Recipe actions">
+            <button type="button" id="copy-button" class="icon-button">
+              <span aria-hidden="true">📋</span><span>Copy</span>
+            </button>
+            <button type="button" id="print-button" class="icon-button">
+              <span aria-hidden="true">🖨️</span><span>Print</span>
+            </button>
+            <button type="button" id="download-pdf-button" class="icon-button">
+              <span aria-hidden="true">⬇️</span><span>PDF</span>
+            </button>
+            <button type="button" id="share-button" class="icon-button">
+              <span aria-hidden="true">🔗</span><span>Share</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="recipe-ingredients">
+          <h4>Ingredients</h4>
+          <ul class="recipe-ingredients-list"></ul>
+        </div>
+
+        <div class="recipe-steps">
+          <h4>Instructions</h4>
+          <ol class="recipe-steps-list"></ol>
+        </div>
+
+        <footer class="recipe-card-actions">
+          <button type="button" id="regenerate-button">Try another recipe</button>
+          <button type="button" id="save-button" class="icon-button" aria-pressed="false">
+            <span aria-hidden="true">☆</span><span>Favorite</span>
+          </button>
+          <a href="index.html#generate" class="btn-glass-outline">Start a new recipe</a>
+        </footer>
+      </article>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 RecipeGenie AI. All rights reserved.</p>
+    <nav aria-label="Footer">
+      <ul>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </footer>
+
+  <script src="app-shared.js"></script>
+  <script src="recipe.js" defer></script>
+</body>
+</html>

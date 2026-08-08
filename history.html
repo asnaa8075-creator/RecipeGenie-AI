@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe History — RecipeGenie AI</title>
+  <meta name="description" content="Your past AI-generated recipes from RecipeGenie AI.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="history.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header>
+    <nav aria-label="Primary">
+      <a href="index.html" class="logo">
+        <span class="logo-mark" aria-hidden="true"></span>
+        RecipeGenie AI
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#generate">New recipe</a></li>
+          <li><a href="history.html" aria-current="page">History</a></li>
+        </ul>
+        <button type="button" class="theme-toggle" aria-label="Toggle dark or light theme" aria-pressed="false">
+          <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+        </button>
+        <button type="button" class="nav-toggle-button" aria-label="Toggle navigation menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content" class="history-page-main">
+
+    <h1 class="history-page-heading">Your recipe history</h1>
+    <p class="history-page-subtitle">
+      Recipes you've generated on this device, most recent first.
+    </p>
+
+    <div class="filter-toggle" role="group" aria-label="Filter history">
+      <button type="button" id="filter-all" class="filter-toggle-button" aria-pressed="true">All</button>
+      <button type="button" id="filter-favorites" class="filter-toggle-button" aria-pressed="false">Favorites</button>
+    </div>
+
+    <!-- Empty state: no history yet, or none matching the current filter -->
+    <div id="history-empty" class="empty-state">
+      <p class="empty-state-icon" aria-hidden="true">📖</p>
+      <p class="empty-state-text" id="history-empty-text">
+        You haven't generated any recipes yet.
+      </p>
+      <a href="index.html#generate" class="btn-glass-outline">Generate your first recipe</a>
+    </div>
+
+    <ul id="history-list" class="history-list" hidden></ul>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 RecipeGenie AI. All rights reserved.</p>
+    <nav aria-label="Footer">
+      <ul>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </footer>
+
+  <script src="app-shared.js"></script>
+  <script src="history.js" defer></script>
+</body>
+</html>

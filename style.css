@@ -1,0 +1,1254 @@
+/* ==========================================================================
+   RecipeGenie AI — style.css
+   Design direction: "steam through a kitchen window" glassmorphism
+   Frosted glass surfaces float over slow-drifting warm color blobs.
+   Selectors match index.html exactly — no HTML changes required.
+   ========================================================================== */
+
+/* -------------------------------------------------------------------------
+   1. Fonts
+   Fraunces  → display/headings (characterful serif, food-editorial feel)
+   Plus Jakarta Sans → body copy, labels, buttons
+   JetBrains Mono → recipe meta stats (servings / prep / cook time)
+   ------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* -------------------------------------------------------------------------
+   2. Design tokens
+   ------------------------------------------------------------------------- */
+:root {
+  /* Color */
+  --ink: #150f27;
+  --ink-deep: #0c0818;
+  --ember: #ff7a59;
+  --ember-soft: #ff9d81;
+  --saffron: #ffc857;
+  --sage: #8fbfa3;
+  --parchment: #f6f1e7;
+  --parchment-dim: rgba(246, 241, 231, 0.7);
+
+  /* Glass surfaces */
+  --glass-fill: rgba(255, 255, 255, 0.08);
+  --glass-fill-strong: rgba(255, 255, 255, 0.14);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-blur: blur(18px);
+
+  /* Type */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Layout */
+  --max-width: 1120px;
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 10px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.2s var(--ease-out);
+  --transition-med: 0.4s var(--ease-out);
+}
+
+/* -------------------------------------------------------------------------
+   2b. Light theme
+   Toggled via [data-theme="light"] on <html>, set by app-shared.js and
+   persisted in localStorage. Same color roles, inverted for a light
+   surface — glass panels become dark-tinted overlays on a warm cream
+   background instead of light-tinted overlays on a dark one.
+   ------------------------------------------------------------------------- */
+:root[data-theme="light"] {
+  --ink: #faf6ee;
+  --ink-deep: #f1e9d8;
+  --parchment: #1f1733;
+  --parchment-dim: rgba(31, 23, 51, 0.68);
+
+  --glass-fill: rgba(21, 15, 39, 0.05);
+  --glass-fill-strong: rgba(21, 15, 39, 0.09);
+  --glass-border: rgba(21, 15, 39, 0.12);
+}
+
+:root[data-theme="light"] body::before,
+:root[data-theme="light"] body::after,
+:root[data-theme="light"] .hero::before {
+  opacity: 0.28;
+}
+
+:root[data-theme="light"] #recipe-form select option {
+  background: var(--ink);
+  color: var(--parchment);
+}
+
+body,
+.cta-button,
+#generate-button {
+  transition: background-color var(--transition-med), color var(--transition-med);
+}
+
+/* -------------------------------------------------------------------------
+   3. Reset & base
+   ------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--parchment);
+  background: var(--ink);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* -------------------------------------------------------------------------
+   4. Signature background — drifting steam/color orbs behind the glass
+   Fixed, decorative, sits behind all content via negative z-index.
+   ------------------------------------------------------------------------- */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  z-index: -2;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+body::before {
+  width: 60vw;
+  height: 60vw;
+  max-width: 700px;
+  max-height: 700px;
+  top: -15%;
+  left: -10%;
+  background: radial-gradient(circle at 30% 30%, var(--ember) 0%, transparent 70%);
+  animation: drift-a 22s ease-in-out infinite alternate;
+}
+
+body::after {
+  width: 55vw;
+  height: 55vw;
+  max-width: 650px;
+  max-height: 650px;
+  bottom: -20%;
+  right: -10%;
+  background: radial-gradient(circle at 60% 60%, var(--sage) 0%, transparent 70%);
+  animation: drift-b 26s ease-in-out infinite alternate;
+}
+
+/* A third orb via a fixed wrapper, since body only has two pseudo-elements */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 40vw;
+  height: 40vw;
+  max-width: 480px;
+  max-height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--saffron) 0%, transparent 70%);
+  filter: blur(100px);
+  opacity: 0.4;
+  z-index: -1;
+  animation: drift-c 18s ease-in-out infinite alternate;
+}
+
+@keyframes drift-a {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(8vw, 10vh) scale(1.15); }
+}
+
+@keyframes drift-b {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-6vw, -8vh) scale(1.1); }
+}
+
+@keyframes drift-c {
+  0%   { transform: translate(-50%, -50%) scale(0.9); }
+  100% { transform: translate(-45%, -55%) scale(1.05); }
+}
+
+/* -------------------------------------------------------------------------
+   5. Utility: glass surface (reused across nav, cards, panels)
+   ------------------------------------------------------------------------- */
+.skip-link,
+header,
+.steps-list li,
+#recipe-form,
+#recipe-form fieldset,
+#loading-state,
+#error-state,
+.recipe-card,
+footer {
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+/* -------------------------------------------------------------------------
+   6. Skip link (accessible, visually hidden until focused)
+   ------------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: -60px;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-sm);
+  color: var(--parchment);
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* -------------------------------------------------------------------------
+   7. Header / nav
+   ------------------------------------------------------------------------- */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+header nav {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.1rem 1.5rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.logo-mark {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ember), var(--saffron));
+  box-shadow: 0 0 14px var(--ember-soft);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links a {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--parchment-dim);
+  position: relative;
+  padding-bottom: 2px;
+  transition: color var(--transition-fast);
+}
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: var(--ember);
+  transition: width var(--transition-fast);
+}
+
+.nav-links a:hover,
+.nav-links a:focus-visible {
+  color: var(--parchment);
+}
+
+.nav-links a:hover::after,
+.nav-links a:focus-visible::after {
+  width: 100%;
+}
+
+/* Groups nav links + theme toggle + mobile hamburger on the right side,
+   so header nav still has exactly two flex children (.logo, .nav-right)
+   and justify-content: space-between keeps working unchanged. */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  background: var(--glass-fill-strong);
+  transform: rotate(15deg);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 2px;
+}
+
+/* Hamburger — hidden on desktop, shown at the mobile breakpoint (see
+   the responsive section near the end of this file). */
+.nav-toggle-button {
+  display: none;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  cursor: pointer;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-toggle-button span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--parchment);
+  border-radius: 2px;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.nav-toggle-button[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.nav-toggle-button[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle-button[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* -------------------------------------------------------------------------
+   8. Hero
+   ------------------------------------------------------------------------- */
+main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 7rem 1rem 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  overflow: hidden;
+  animation: fade-up 0.9s var(--ease-out) both;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  max-width: 20ch;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--parchment-dim);
+  max-width: 46ch;
+}
+
+.cta-button {
+  margin-top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.95rem 2.2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--saffron), var(--ember));
+  box-shadow: 0 8px 30px -8px rgba(255, 122, 89, 0.6);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.cta-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s var(--ease-out);
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px -6px rgba(255, 122, 89, 0.75);
+}
+
+.cta-button:hover::before {
+  left: 125%;
+}
+
+.cta-button:focus-visible {
+  outline: 2px solid var(--parchment);
+  outline-offset: 3px;
+}
+
+/* -------------------------------------------------------------------------
+   9. How it works
+   ------------------------------------------------------------------------- */
+#how-it-works {
+  padding: 4rem 0;
+}
+
+#how-it-works h2 {
+  text-align: center;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin-bottom: 3rem;
+}
+
+.steps-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.steps-list li {
+  border-radius: var(--radius-md);
+  padding: 2rem 1.75rem;
+  transition: transform var(--transition-med), background var(--transition-med);
+}
+
+.steps-list li:hover {
+  transform: translateY(-6px);
+  background: var(--glass-fill-strong);
+}
+
+.steps-list h3 {
+  font-size: 1.15rem;
+  margin-bottom: 0.6rem;
+  color: var(--saffron);
+}
+
+.steps-list p {
+  color: var(--parchment-dim);
+  font-size: 0.95rem;
+}
+
+/* -------------------------------------------------------------------------
+   10. Recipe generation form
+   ------------------------------------------------------------------------- */
+#generate {
+  padding: 3rem 0 6rem;
+}
+
+#generate > h2 {
+  text-align: center;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin-bottom: 2.5rem;
+}
+
+#recipe-form {
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+#recipe-form fieldset {
+  border-radius: var(--radius-md);
+  border-width: 1px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#recipe-form legend {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  padding: 0 0.5rem;
+  color: var(--saffron);
+}
+
+#recipe-form label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: var(--parchment-dim);
+}
+
+#ingredients-input,
+#recipe-form select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--parchment);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+#ingredients-input::placeholder {
+  color: rgba(246, 241, 231, 0.45);
+}
+
+#ingredients-input:focus,
+#recipe-form select:focus {
+  outline: none;
+  border-color: var(--ember);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 122, 89, 0.25);
+}
+
+.input-hint {
+  font-size: 0.8rem;
+  color: var(--parchment-dim);
+  margin-top: 0.4rem;
+}
+
+#recipe-form fieldset:nth-of-type(2) {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+#recipe-form select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--parchment-dim) 50%),
+                     linear-gradient(135deg, var(--parchment-dim) 50%, transparent 50%);
+  background-position: calc(100% - 18px) center, calc(100% - 13px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+#recipe-form select option {
+  background: var(--ink);
+  color: var(--parchment);
+}
+
+#generate-button {
+  align-self: center;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--ember), var(--saffron));
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 8px 24px -8px rgba(255, 122, 89, 0.55);
+}
+
+#generate-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 30px -6px rgba(255, 122, 89, 0.7);
+}
+
+#generate-button:active {
+  transform: translateY(0) scale(0.99);
+}
+
+#generate-button:focus-visible {
+  outline: 2px solid var(--parchment);
+  outline-offset: 3px;
+}
+
+/* -------------------------------------------------------------------------
+   11. Loading & error states
+   ------------------------------------------------------------------------- */
+#form-error {
+  margin-top: 1.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 122, 89, 0.35);
+  text-align: center;
+  color: var(--ember-soft);
+  font-size: 0.9rem;
+  animation: shake 0.4s var(--ease-out) both;
+}
+
+#empty-state,
+#loading-state,
+#error-state {
+  margin-top: 2rem;
+  padding: 2rem;
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+/* Empty state -------------------------------------------------------- */
+#empty-state {
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px dashed var(--glass-border);
+  animation: fade-up 0.6s var(--ease-out) both;
+}
+
+.empty-state-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.8;
+}
+
+.empty-state-text {
+  color: var(--parchment-dim);
+  font-size: 0.95rem;
+  max-width: 40ch;
+  margin: 0 auto;
+}
+
+.empty-state-text strong {
+  color: var(--saffron);
+  font-weight: 600;
+}
+
+/* Loading state -------------------------------------------------------- */
+#loading-state {
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  animation: fade-up 0.4s var(--ease-out) both;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 200, 87, 0.2);
+  border-top-color: var(--saffron);
+  border-right-color: var(--ember);
+  animation: spin 0.9s linear infinite;
+}
+
+.loading-label {
+  color: var(--saffron);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.typing-preview {
+  min-height: 1.4em;
+  max-width: 60ch;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--parchment-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.typing-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  margin-left: 2px;
+  background: var(--saffron);
+  vertical-align: text-bottom;
+  animation: blink 0.9s steps(1) infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes blink {
+  0%, 49%  { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Error state -------------------------------------------------------- */
+#error-state {
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 122, 89, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  animation: shake 0.4s var(--ease-out) both;
+}
+
+.error-icon {
+  font-size: 1.6rem;
+}
+
+#error-message-text {
+  color: var(--ember-soft);
+  font-size: 0.95rem;
+  max-width: 50ch;
+}
+
+#retry-button {
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 122, 89, 0.4);
+  background: rgba(255, 122, 89, 0.12);
+  color: var(--parchment);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+#retry-button:hover {
+  background: rgba(255, 122, 89, 0.22);
+  transform: translateY(-2px);
+}
+
+#retry-button:focus-visible {
+  outline: 2px solid var(--ember-soft);
+  outline-offset: 2px;
+}
+
+@keyframes shake {
+  0%   { transform: translateX(0); opacity: 0; }
+  25%  { transform: translateX(-6px); }
+  50%  { transform: translateX(6px); opacity: 1; }
+  75%  { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+
+/* Success toast -------------------------------------------------------- */
+.toast {
+  position: fixed;
+  top: 1.5rem;
+  left: 50%;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(143, 191, 163, 0.95), rgba(111, 165, 135, 0.95));
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.45);
+  transform: translate(-50%, -20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
+}
+
+.toast.is-visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+.toast-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(21, 15, 39, 0.15);
+  font-size: 0.75rem;
+}
+
+/* -------------------------------------------------------------------------
+   12. Recipe result card
+   ------------------------------------------------------------------------- */
+#recipe-result {
+  margin-top: 3rem;
+  animation: fade-up 0.6s var(--ease-out) both;
+}
+
+#recipe-result h2 {
+  text-align: center;
+  font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+  margin-bottom: 1.75rem;
+}
+
+.recipe-card {
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  transition: box-shadow var(--transition-med);
+}
+
+.recipe-card:hover {
+  box-shadow: 0 20px 60px -20px rgba(255, 122, 89, 0.35);
+}
+
+.recipe-title {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-style: italic;
+  color: var(--parchment);
+  margin-bottom: 0.5rem;
+}
+
+.recipe-description {
+  color: var(--parchment-dim);
+  margin-bottom: 1.25rem;
+}
+
+.recipe-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.recipe-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  min-width: 100px;
+}
+
+.recipe-meta dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--parchment-dim);
+}
+
+.recipe-meta dd {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--saffron);
+}
+
+.recipe-ingredients h4,
+.recipe-steps h4 {
+  font-size: 1.05rem;
+  color: var(--sage);
+  margin-bottom: 0.85rem;
+}
+
+.recipe-ingredients-list li,
+.recipe-steps-list li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--parchment-dim);
+  font-size: 0.95rem;
+}
+
+.recipe-ingredients-list li:last-child,
+.recipe-steps-list li:last-child {
+  border-bottom: none;
+}
+
+.recipe-steps-list {
+  counter-reset: step;
+}
+
+.recipe-steps-list li {
+  counter-increment: step;
+  padding-left: 2.25rem;
+  position: relative;
+}
+
+.recipe-steps-list li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background: linear-gradient(135deg, var(--ember), var(--saffron));
+  color: var(--ink);
+}
+
+.recipe-card-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 1.5rem;
+}
+
+#regenerate-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--parchment);
+}
+
+#regenerate-button:hover {
+  background: var(--glass-fill-strong);
+  transform: translateY(-2px);
+}
+
+/* #save-button now uses the shared .icon-button component (see the
+   "Icon button toolbar" section) as a Favorite toggle, rather than its
+   own dedicated styling — this keeps its aria-pressed state consistent
+   with the Copy/Print/PDF/Share buttons. */
+
+/* -------------------------------------------------------------------------
+   13. Footer
+   ------------------------------------------------------------------------- */
+footer {
+  max-width: var(--max-width);
+  margin: 3rem auto 2rem;
+  border-radius: var(--radius-md);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--parchment-dim);
+}
+
+footer nav ul {
+  display: flex;
+  gap: 1.5rem;
+}
+
+footer nav a {
+  transition: color var(--transition-fast);
+}
+
+footer nav a:hover,
+footer nav a:focus-visible {
+  color: var(--parchment);
+}
+
+/* -------------------------------------------------------------------------
+   14. Shared animation keyframes
+   ------------------------------------------------------------------------- */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   15. Responsive layout
+   ------------------------------------------------------------------------- */
+@media (max-width: 960px) {
+  .steps-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  header nav {
+    position: relative;
+    justify-content: space-between;
+  }
+
+  .nav-toggle-button {
+    display: inline-flex;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--glass-fill-strong);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    padding: 0.5rem 0;
+  }
+
+  header nav.nav-open .nav-links {
+    display: flex;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 0.85rem 1.5rem;
+  }
+
+  .nav-links a::after {
+    display: none;
+  }
+
+  .hero {
+    padding: 5rem 0.5rem 4rem;
+  }
+
+  .steps-list {
+    grid-template-columns: 1fr;
+  }
+
+  #recipe-form {
+    padding: 1.5rem;
+  }
+
+  .recipe-card {
+    padding: 1.75rem;
+  }
+
+  footer {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #generate-button {
+    width: 100%;
+  }
+
+  .recipe-meta > div {
+    flex: 1 1 auto;
+  }
+
+  .toast {
+    left: 1rem;
+    right: 1rem;
+    top: 1rem;
+    transform: translateY(-20px);
+    text-align: left;
+  }
+
+  .toast.is-visible {
+    transform: translateY(0);
+  }
+
+  .typing-preview {
+    max-width: 100%;
+    white-space: normal;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   15b. Icon button toolbar (Copy / Print / Download PDF / Share)
+   Shared component styled here since it's used the same way wherever a
+   recipe is displayed; page-specific files only add layout placement.
+   ------------------------------------------------------------------------- */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  color: var(--parchment);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.icon-button:hover {
+  background: var(--glass-fill-strong);
+  transform: translateY(-2px);
+}
+
+.icon-button:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 2px;
+}
+
+.icon-button[aria-pressed="true"] {
+  background: linear-gradient(135deg, var(--saffron), var(--ember));
+  color: var(--ink);
+  border-color: transparent;
+}
+
+/* Brief inline confirmation state after a successful copy/share action,
+   toggled via a class rather than the button's permanent label. */
+.icon-button.is-confirmed {
+  background: rgba(143, 191, 163, 0.25);
+  border-color: rgba(143, 191, 163, 0.5);
+}
+
+/* -------------------------------------------------------------------------
+   15c. Print styles
+   Applies wherever a .recipe-card exists (currently recipe.html). Hides
+   all chrome — nav, decorative orbs, toasts, action toolbars — leaving
+   just the recipe content, in plain light print-friendly colors.
+   ------------------------------------------------------------------------- */
+@media print {
+  body::before,
+  body::after,
+  .hero::before,
+  header,
+  footer,
+  .toast,
+  .back-link,
+  .recipe-page-heading,
+  .icon-button,
+  .recipe-card-actions,
+  #loading-state,
+  #error-state,
+  #empty-state {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+    color: #1a1a1a;
+  }
+
+  .recipe-page-main {
+    padding: 0;
+    max-width: none;
+    animation: none;
+  }
+
+  .recipe-card {
+    background: #ffffff;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding: 0;
+  }
+
+  .recipe-title,
+  .recipe-description,
+  .recipe-meta dt,
+  .recipe-meta dd,
+  .recipe-ingredients h4,
+  .recipe-steps h4,
+  .recipe-ingredients-list li,
+  .recipe-steps-list li {
+    color: #1a1a1a !important;
+  }
+
+  .recipe-steps-list li::before {
+    background: #1a1a1a;
+    color: #ffffff;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

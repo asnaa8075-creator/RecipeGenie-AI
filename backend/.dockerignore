@@ -1,0 +1,51 @@
+# .dockerignore — excludes files from the Docker BUILD CONTEXT.
+# Anything listed here is never sent to the Docker daemon at all, so it
+# can't accidentally end up in an image layer even if a COPY instruction
+# is written too broadly later. This is a security control as much as a
+# size optimization — secrets excluded here can never leak into the image.
+
+# Environment / secrets — the whole reason this file exists as a
+# security boundary, not just a size one. .env is never baked into the
+# image; real values are injected at container runtime instead.
+.env
+.env.*
+!.env.example
+
+# Version control metadata — irrelevant at runtime, and .git history
+# can be large and may contain old secrets from previous commits.
+.git
+.gitignore
+
+# Python bytecode / caches — regenerated fresh inside the container;
+# copying host-generated versions risks platform/version mismatches.
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments — the image installs its own dependencies via
+# requirements.txt; a host-created venv is both unnecessary and often
+# built for the wrong OS/architecture to run inside the container.
+venv/
+.venv/
+env/
+
+# Editor/OS metadata — no runtime relevance, just noise in the build
+# context (and marginally slower builds for no benefit).
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Docs and local tooling — not needed for the app to run.
+README.md
+*.md
+
+# Docker files themselves don't need to be inside their own build
+# context, and re-including them changes nothing at runtime.
+Dockerfile
+.dockerignore

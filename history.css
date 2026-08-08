@@ -1,0 +1,186 @@
+/* ==========================================================================
+   history.css — page-specific styles for history.html
+   Loaded after style.css, which supplies tokens and shared components
+   (header/nav, glass utility, empty-state, buttons, animations).
+   ========================================================================== */
+
+.history-page-main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  animation: fade-up 0.5s var(--ease-out) both;
+}
+
+.history-page-heading {
+  text-align: center;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.history-page-subtitle {
+  text-align: center;
+  color: var(--parchment-dim);
+  margin-bottom: 2rem;
+}
+
+/* -------------------------------------------------------------------------
+   Filter toggle (All / Favorites)
+   ------------------------------------------------------------------------- */
+.filter-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.filter-toggle-button {
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-fill);
+  color: var(--parchment-dim);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+.filter-toggle-button:hover {
+  background: var(--glass-fill-strong);
+}
+
+.filter-toggle-button[aria-pressed="true"] {
+  background: linear-gradient(135deg, var(--saffron), var(--ember));
+  color: var(--ink);
+  border-color: transparent;
+}
+
+/* -------------------------------------------------------------------------
+   History list
+   ------------------------------------------------------------------------- */
+.history-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.history-item {
+  background: var(--glass-fill);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  transition: transform var(--transition-med), box-shadow var(--transition-med);
+  animation: fade-up 0.4s var(--ease-out) both;
+}
+
+.history-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px -18px rgba(255, 122, 89, 0.35);
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.history-item-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--parchment);
+  line-height: 1.3;
+}
+
+.history-item-favorite {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--saffron);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.history-item-favorite:hover {
+  transform: scale(1.1);
+  background: var(--glass-fill-strong);
+}
+
+.history-item-favorite[aria-pressed="true"] {
+  background: rgba(255, 200, 87, 0.18);
+}
+
+.history-item-date {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--parchment-dim);
+}
+
+.history-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.history-item-tag {
+  font-size: 0.72rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--glass-border);
+  color: var(--parchment-dim);
+}
+
+.history-item-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.history-item-actions .btn-glass-outline,
+.history-item-remove {
+  flex: 1;
+  text-align: center;
+  padding: 0.55rem 1rem;
+  font-size: 0.85rem;
+}
+
+.history-item-remove {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 122, 89, 0.3);
+  background: transparent;
+  color: var(--ember-soft);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.history-item-remove:hover {
+  background: rgba(255, 122, 89, 0.12);
+}
+
+/* -------------------------------------------------------------------------
+   Responsive
+   ------------------------------------------------------------------------- */
+@media (max-width: 720px) {
+  .history-page-main {
+    padding: 2rem 1rem 4rem;
+  }
+
+  .history-list {
+    grid-template-columns: 1fr;
+  }
+}
