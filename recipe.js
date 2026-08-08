@@ -39,7 +39,7 @@
   // deploying (e.g. to the AWS-hosted backend URL). Same contract as
   // was used from index.html previously; only where it's called from
   // has changed.
-  const BACKEND_BASE_URL = "http://localhost:8000";
+  const BACKEND_BASE_URL = "https://recipegenie-ai-c873.onrender.com";
   const API_ENDPOINT = `${BACKEND_BASE_URL}/api/generate-recipe`;
 
   // Matches the key index.html's script.js writes to before navigating.
